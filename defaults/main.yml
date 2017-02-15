@@ -5,9 +5,17 @@
   deploy_user: "etherpad"
 
   options_create_etherpad_user: true
+  option_create_etherpad_db: true
   option_nodejs_install_with_nvm: true
 
   etherpad_install_dir: /opt/etherpad
+  etherpad_log: /var/log/etherpad-lite
+  etherpad_admin_pwd: rTLEtHORticIon # override !
+
+  etherpad_db_type: postgres
+  etherpad_db_user: etherpad
+  etherpad_db_pwd: OrIOugHBrAMASI  # override !
+  etherpad_db: etherpad
 
   nvm_version: 0.31.1
   nodejs_version: "6.9.2"

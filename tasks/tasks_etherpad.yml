@@ -1,7 +1,22 @@
 ---
+  - name: Etherpad | Add etherpad user
+    user: name="{{deploy_user}}" shell="/bin/false"
+    when: options_create_etherpad_user
+    become: yes
+    tags:
+      - etherpad
+
+  - include: tasks_nvm.yml
+    when: option_nodejs_install_with_nvm
+
+  - name: Etherpad | Detect node location
+    include: __detect_node_path.yml
+    when: npm_path_detected is not defined
+
   - name: Etherpad | Install dependencies
     apt: pkg="{{item}}" state="present"
     with_items:
+      - unzip
       - gzip
       - git
       - curl
@@ -11,14 +26,6 @@
     become: yes
     tags:
       - etherpad
-
-  - name: Etherpad | Add etherpad user
-    user: name="{{deploy_user}}" shell="/bin/false" system="true"
-    when: options_create_etherpad_user
-    become: yes
-    tags:
-      - etherpad
-
 
   - name: Etherpad | Create installation directory
     file: path="{{etherpad_install_dir}}" state="directory" owner="{{deploy_user}}" group="{{deploy_user}}"
@@ -41,8 +48,11 @@
     tags:
       - etherpad
 
+  - include: __detect_init_system.yml
+    when: upstart_system is not defined
+
   - name: Etherpad | Configure upstart
-    template: src="{{role_dir}}/templates/etherpad/upstart.j2" dest="/etc/init/etherpad"
+    template: src="{{role_dir}}/templates/etherpad/upstart.j2" dest="/etc/init/etherpad.conf"
     when: upstart_system == "upstart"
     become: yes
     tags:
@@ -50,7 +60,7 @@
 
   - name: Etherpad | Configure systemd
     template: src="{{role_dir}}/templates/etherpad/systemd.service.j2" dest="/etc/systemd/system/etherpad.service"
-    when: upstart_system == "upstart"
+    when: upstart_system == "systemd"
     become: yes
     tags:
       - etherpad
