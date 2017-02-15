@@ -50,6 +50,7 @@
 
   - name: Etherpad | Create log dir
     file: path="{{etherpad_log_dir}}" state="directory" owner="{{deploy_user}}" group="{{deploy_user}}" mode="0755"
+    when: docker_test is not defined
     become: yes
     become_user: "{{deploy_user}}"
     tags:
