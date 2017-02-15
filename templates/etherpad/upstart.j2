@@ -4,7 +4,7 @@ start on started networking
 stop on runlevel [!2345]
 
 env EPHOME={{etherpad_install_dir}}/etherpad-lite-{{etherpad_version}}
-env EPLOGS={{etherpad_log}}
+env EPLOGS={{etherpad_log_dir}}
 env EPUSER={{deploy_user}}
 env PATH={{npm_path_detected}}:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin:$PATH
 env NODE_BIN={{npm_path_detected}}/node
