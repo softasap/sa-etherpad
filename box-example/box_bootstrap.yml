@@ -1,10 +1,12 @@
 ---
 - hosts: www
+  gather_facts: False
 
   vars:
     - root_dir: ..
-    - custom_demo_domain: "etherpad"
-    
+    - user_authorized_keys:
+        - "~/.ssh/id_rsa.pub"
+
   pre_tasks:
     - debug: msg="Pre tasks section"
 
@@ -18,25 +20,16 @@
 
     - name: gather facts
       setup:
-      tags: always
 
   roles:
      - {
-         role: "sa-nginx"
-       }
-     - {
-         role: "sa-include",
-         include_file: "{{root_dir}}/demosite.yml"
-       }
-     - {
-         role: "sa-etherpad",
-         option_nodejs_install_with_nvm: true,
-         etherpad_domain: "{{custom_demo_domain}}"
+         role: "sa-box-bootstrap",
+         deploy_user: "provision",
+         deploy_user_authorized_keys: "{{user_authorized_keys}}"
        }
 
 
   tasks:
+
     - debug: msg="Tasks section"
 
-    - service: name="nginx" state="restarted"
-      become: yes
