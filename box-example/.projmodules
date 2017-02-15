@@ -1,0 +1,4 @@
+[submodule "roles/sa-etherpad"]
+        path = roles/sa-etherpad
+        url = https://github.com/softasap/sa-etherpad.git
+

@@ -1,0 +1,7 @@
+---
+# tasks file for sa-etherpad
+
+  - include: tasks_nvm.yml
+    when: option_nodejs_install_with_nvm
+
+  - include: tasks_etherpad.yml

@@ -1,0 +1,63 @@
+---
+  - name: Etherpad | Install dependencies
+    apt: pkg="{{item}}" state="present"
+    with_items:
+      - gzip
+      - git
+      - curl
+      - libssl-dev
+      - pkg-config
+      - build-essential
+    become: yes
+    tags:
+      - etherpad
+
+  - name: Etherpad | Add etherpad user
+    user: name="{{deploy_user}}" shell="/bin/false" system="true"
+    when: options_create_etherpad_user
+    become: yes
+    tags:
+      - etherpad
+
+
+  - name: Etherpad | Create installation directory
+    file: path="{{etherpad_install_dir}}" state="directory" owner="{{deploy_user}}" group="{{deploy_user}}"
+    become: yes
+    tags:
+      - etherpad
+
+  - name: Etherpad | Download distribution
+    get_url:
+      url: "https://github.com/ether/etherpad-lite/archive/1.6.1.zip"
+      dest: "/tmp/etherpad.zip"
+    become: yes
+    tags:
+      - etherpad
+
+  - name: Etherpad | Unpack distribution
+    unarchive: src="/tmp/etherpad.zip" dest="{{etherpad_install_dir}}" remote_src=True
+    become: yes
+    become_user: "{{deploy_user}}"
+    tags:
+      - etherpad
+
+  - name: Etherpad | Configure upstart
+    template: src="{{role_dir}}/templates/etherpad/upstart.j2" dest="/etc/init/etherpad"
+    when: upstart_system == "upstart"
+    become: yes
+    tags:
+      - etherpad
+
+  - name: Etherpad | Configure systemd
+    template: src="{{role_dir}}/templates/etherpad/systemd.service.j2" dest="/etc/systemd/system/etherpad.service"
+    when: upstart_system == "upstart"
+    become: yes
+    tags:
+      - etherpad
+
+  - name: Etherpad | Enable service
+    service: name="etherpad" state="started" enabled="yes"
+    when: docker_test is not defined
+    become: yes
+    tags:
+      - etherpad
