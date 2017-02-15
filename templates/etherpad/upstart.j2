@@ -11,16 +11,6 @@ env NODE_BIN={{npm_path_detected}}/node
 
 respawn
 
-pre-start script
-    cd $EPHOME
-    mkdir $EPLOGS                              ||true
-    chown $EPUSER:root $EPLOGS                 ||true
-    chmod 0755 $EPLOGS                         ||true
-    chown -R $EPUSER:root $EPHOME/var          ||true
-    echo $PATH
-    $EPHOME/bin/installDeps.sh >> $EPLOGS/error.log || { stop; exit 1; }
-end script
-
 script
   cd $EPHOME/
   exec su -s /bin/sh -c 'exec "$0" "$@"' $EPUSER -- node node_modules/ep_etherpad-lite/node/server.js \

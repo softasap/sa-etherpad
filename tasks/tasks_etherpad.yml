@@ -48,6 +48,24 @@
     tags:
       - etherpad
 
+  - name: Etherpad | Create log dir
+    file: path="{{etherpad_log_dir}}" state="directory" owner="{{deploy_user}}" group="{{deploy_user}}" mode="0755"
+    become: yes
+    become_user: "{{deploy_user}}"
+    tags:
+      - etherpad
+
+  - name: Etherpad | Install node dependencies
+    shell: "./installDeps.sh"
+    args:
+      chdir: "{{etherpad_install_dir}}/etherpad-lite-{{etherpad_version}}/bin"
+    become: "yes"
+    become_user: "{{deploy_user}}"
+    environment:
+      PATH: "{{npm_path_detected}}:{{ ansible_env.PATH }}"       # can be different depending on nvm version
+    tags:
+    - etherpad
+
   - include: __detect_init_system.yml
     when: upstart_system is not defined
 
