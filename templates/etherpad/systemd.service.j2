@@ -6,8 +6,14 @@ After=syslog.target network.target
 Type=simple
 User=etherpad
 Group=etherpad
-WorkingDirectory=/opt/etherpad
-ExecStart=/usr/bin/nodejs /opt/etherpad/node_modules/ep_etherpad-lite/node/server.js
+Environment=EPHOME={{etherpad_install_dir}}/etherpad-lite-{{etherpad_version}}
+Environment=EPLOGS={{etherpad_log}}
+Environment=EPUSER={{deploy_user}}
+Environment=PATH={{npm_path_detected}}:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin:$PATH
+Environment=NODE_BIN={{npm_path_detected}}/node
+
+WorkingDirectory={{etherpad_install_dir}}/etherpad-lite-{{etherpad_version}}
+ExecStart=node node_modules/ep_etherpad-lite/node/server.js
 Restart=always
 
 [Install]

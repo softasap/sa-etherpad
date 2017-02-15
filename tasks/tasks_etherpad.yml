@@ -35,7 +35,7 @@
 
   - name: Etherpad | Download distribution
     get_url:
-      url: "https://github.com/ether/etherpad-lite/archive/1.6.1.zip"
+      url: "https://github.com/ether/etherpad-lite/archive/{{etherpad_version}}.zip"
       dest: "/tmp/etherpad.zip"
     become: yes
     tags:

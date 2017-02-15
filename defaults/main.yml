@@ -11,6 +11,7 @@
   etherpad_install_dir: /opt/etherpad
   etherpad_log: /var/log/etherpad-lite
   etherpad_admin_pwd: rTLEtHORticIon # override !
+  etherpad_version: 1.6.1
 
   etherpad_db_type: postgres
   etherpad_db_user: etherpad
