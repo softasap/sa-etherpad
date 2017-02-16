@@ -13,7 +13,7 @@ Environment=PATH={{npm_path_detected}}:/usr/local/sbin:/usr/local/bin:/usr/bin:/
 Environment=NODE_BIN={{npm_path_detected}}/node
 
 WorkingDirectory={{etherpad_install_dir}}/etherpad-lite-{{etherpad_version}}
-ExecStart=$NODE_BIN node_modules/ep_etherpad-lite/node/server.js
+ExecStart={{npm_path_detected}}/node node_modules/ep_etherpad-lite/node/server.js
 Restart=always
 
 [Install]
