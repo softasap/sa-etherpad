@@ -1,7 +1,7 @@
 ---
 # defaults file for sa-etherpad
 
-  role_dir: "{{role_path}}"
+  role_dir: "{{ role_path }}"
   deploy_user: "etherpad"
 
   options_create_etherpad_user: true
