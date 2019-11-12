@@ -1,55 +1,56 @@
 ---
   - name: Etherpad | Add etherpad user
-    user: name="{{deploy_user}}" shell="/bin/false"
+    user: name="{{ deploy_user }}" shell="/bin/false"
     when: options_create_etherpad_user
     become: yes
     tags:
       - etherpad
 
-  - include: tasks_nvm.yml
+  - include_tasks: tasks_nvm.yml
     when: option_nodejs_install_with_nvm
 
   - name: Etherpad | Detect node location
-    include: __detect_node_path.yml
+    include_tasks: __detect_node_path.yml
     when: npm_path_detected is not defined
 
   - name: Etherpad | Install dependencies
-    apt: pkg="{{item}}" state="present"
-    with_items:
-      - unzip
-      - gzip
-      - git
-      - curl
-      - libssl-dev
-      - pkg-config
-      - build-essential
+    apt:
+       pkg:
+        - unzip
+        - gzip
+        - git
+        - curl
+        - libssl-dev
+        - pkg-config
+        - build-essential
+       state: present
     become: yes
     tags:
       - etherpad
 
   - name: Etherpad | Create installation directory
-    file: path="{{etherpad_install_dir}}" state="directory" owner="{{deploy_user}}" group="{{deploy_user}}"
+    file: path="{{ etherpad_install_dir }}" state="directory" owner="{{ deploy_user }}" group="{{ deploy_user }}"
     become: yes
     tags:
       - etherpad
 
   - name: Etherpad | Download distribution
     get_url:
-      url: "https://github.com/ether/etherpad-lite/archive/{{etherpad_version}}.zip"
+      url: "https://github.com/ether/etherpad-lite/archive/{{ etherpad_version }}.zip"
       dest: "/tmp/etherpad.zip"
     become: yes
     tags:
       - etherpad
 
   - name: Etherpad | Unpack distribution
-    unarchive: src="/tmp/etherpad.zip" dest="{{etherpad_install_dir}}" remote_src=True
+    unarchive: src="/tmp/etherpad.zip" dest="{{ etherpad_install_dir }}" remote_src=True
     become: yes
-    become_user: "{{deploy_user}}"
+    become_user: "{{ deploy_user }}"
     tags:
       - etherpad
 
   - name: Etherpad | Create log dir
-    file: path="{{etherpad_log_dir}}" state="directory" owner="{{deploy_user}}" group="{{deploy_user}}" mode="0755"
+    file: path="{{ etherpad_log_dir }}" state="directory" owner="{{ deploy_user }}" group="{{ deploy_user }}" mode="0755"
     when: docker_test is not defined
     become: yes
     tags:
@@ -58,26 +59,27 @@
   - name: Etherpad | Install node dependencies
     shell: "./installDeps.sh"
     args:
-      chdir: "{{etherpad_install_dir}}/etherpad-lite-{{etherpad_version}}/bin"
+      chdir: "{{ etherpad_install_dir }}/etherpad-lite-{{ etherpad_version }}/bin"
     become: "yes"
-    become_user: "{{deploy_user}}"
+    become_user: "{{ deploy_user }}"
     environment:
-      PATH: "{{npm_path_detected}}:{{ ansible_env.PATH }}"       # can be different depending on nvm version
+      PATH: "{{ npm_path_detected }}:{{ ansible_env.PATH }}"       # can be different depending on nvm version
     tags:
-    - etherpad
+      - etherpad
+      - skip_ansible_lint
 
-  - include: __detect_init_system.yml
+  - include_tasks: __detect_init_system.yml
     when: upstart_system is not defined
 
   - name: Etherpad | Configure upstart
-    template: src="{{role_dir}}/templates/etherpad/upstart.j2" dest="/etc/init/etherpad.conf"
+    template: src="{{ role_dir }}/templates/etherpad/upstart.j2" dest="/etc/init/etherpad.conf"
     when: upstart_system == "upstart"
     become: yes
     tags:
       - etherpad
 
   - name: Etherpad | Configure systemd
-    template: src="{{role_dir}}/templates/etherpad/systemd.service.j2" dest="/etc/systemd/system/etherpad.service"
+    template: src="{{ role_dir }}/templates/etherpad/systemd.service.j2" dest="/etc/systemd/system/etherpad.service"
     when: upstart_system == "systemd"
     become: yes
     tags:

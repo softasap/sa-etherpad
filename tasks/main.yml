@@ -1,4 +1,4 @@
 ---
 # tasks file for sa-etherpad
 
-  - include: tasks_etherpad.yml
+  - include_tasks: tasks_etherpad.yml
