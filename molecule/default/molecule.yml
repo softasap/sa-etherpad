@@ -55,8 +55,10 @@ ansible:
   #   pipelining: True
 
 platforms:
-  - name: bionic
-    box: ubuntu/bionic64
+#  - name: bionic
+#    box: ubuntu/bionic64
+  - name: trusty
+    box: ubuntu/trusty64
     memory: 4096
     cpus: 2
     # interfaces:
